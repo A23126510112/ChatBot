@@ -109,13 +109,18 @@ POST /webhook
 
 ## 📸 Screenshots
 
-(Add your screenshots here)
+### Chat UI
+![Chat UI](screenshots/ui.png)
+
+### Conversation
+![Chat Example](screenshots/chat.png)
+
 
 ---
 
 ## 🎥 Demo Video
 
-(Add your demo video link here)
+([SpringBoot_Chatbot_Webhook_Assignment_Demo](https://drive.google.com/file/d/1cFvvhwXwWNBFTDcFGCUuc89kU1oWgV7a/view?usp=sharing))
 
 ---
 
