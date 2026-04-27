@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatbot</title>
+  <style>
+    body {
+        font-family: Arial;
+        background: #f0f2f5;
+    }
+
+    .chat-container {
+        width: 350px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        padding: 10px;
+    }
+
+    .chat-box {
+        height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    .message {
+        margin: 8px 0;
+        padding: 8px 12px;
+        border-radius: 15px;
+        max-width: 70%;
+        display: inline-block;
+        clear: both;
+    }
+
+    .user {
+        background: #dcf8c6;
+        float: right;
+    }
+
+    .bot {
+        background: #eee;
+        float: left;
+    }
+
+    .time {
+        display: block;
+        font-size: 10px;
+        color: gray;
+        margin-top: 3px;
+        text-align: right;
+    }
+
+    .input-box {
+        display: flex;
+        margin-top: 10px;
+        clear: both;
+    }
+
+    input {
+        flex: 1;
+        padding: 10px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        margin-left: 5px;
+        padding: 10px 15px;
+        border: none;
+        background: #0084ff;
+        color: white;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+  <h3>Chatbot 🤖</h3>
+
+  <div class="chat-box" id="chatBox"></div>
+
+  <div class="input-box">
+    <input type="text" id="msg" placeholder="Type message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+
+  // ✅ time function added
+  function getTime() {
+      let now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+
+      let ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+
+      if (minutes < 10) minutes = "0" + minutes;
+
+      return hours + ":" + minutes + " " + ampm;
+  }
+
+  function addMessage(text, type, timeValue = null) {
+      let chatBox = document.getElementById("chatBox");
+
+      let msgDiv = document.createElement("div");
+      msgDiv.classList.add("message", type);
+
+      let msgText = document.createElement("div");
+      msgText.innerText = text;
+
+      let time = document.createElement("span");
+      time.classList.add("time");
+
+      if (timeValue) {
+          time.innerText = timeValue; // backend time
+      } else {
+          time.innerText = getTime(); // frontend time
+      }
+
+      msgDiv.appendChild(msgText);
+      msgDiv.appendChild(time);
+
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function sendMessage() {
+      let input = document.getElementById("msg");
+      let message = input.value.trim();
+
+      if (message === "") return;
+
+      addMessage(message, "user");
+
+      fetch('/webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+      })
+      .then(res => res.json())
+      .then(data => {
+          addMessage(data.reply, "bot", data.time);
+      })
+      .catch(() => {
+          addMessage("Error connecting to server ⚠️", "bot");
+      });
+
+      input.value = "";
+  }
+
+  // Enter key
+  document.getElementById("msg")
+  .addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+          sendMessage();
+      }
+  });
+
+</script>
+
+</body>
+</html>
