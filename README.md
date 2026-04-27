@@ -110,7 +110,7 @@ POST /webhook
 ## 📸 Screenshots
 
 ### Chat UI
-![UI](UI)
+![UI](UI.png)
 
 ### Conversation
 ![PostMan](Screenshot%202026-04-27%20161019.png)
